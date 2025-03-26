@@ -10,7 +10,7 @@
 - simplist_zlib : Nixpkgs에 찾을 수 있는 `zlib`에 의존하는 간단한 프로젝트를 빌드합니다.
 - simplist_libfoo : 현재 프로젝트에서만 쓰일 c라이브러리에 의존하는 프로젝트를 빌드합니다.
 
-루트 폴더의 아래 샘플들은 Flake와 `cabal2nix`를 활용한 예시입니다.
+루트 폴더의 아래 샘플들은 @jhhuh님이 위 classic nix용 코드를 Flake와 `cabal2nix`를 활용해서, 현재에 맞는 예시로 바꿨습니다.
 
 - simplist
 - simplist_zlib
