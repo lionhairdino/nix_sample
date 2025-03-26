@@ -1,7 +1,7 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ haskell, ghc-name ? "ghc98" }:
 
 let
-  haskellPackages = pkgs.haskell.packages.ghc98;
+  haskellPackages = haskell.packages.${ghc-name};
 in
   haskellPackages.callCabal2nix "simplist" ./. {}
 
