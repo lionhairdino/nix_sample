@@ -14,23 +14,49 @@
   outputs = inputs:
   let
     system = "x86_64-linux";
-    pkgs = import inputs.nixpkgs { inherit system; };
-    simplist = pkgs.callPackage ./simplist {};
-    dev-shells = {
-     simplist = null; 
-     simplist_zlib = (import ./simplist_libfoo/shell.nix { inherit pkgs; }).devShell;
-     simplist_libfoo = null;
-   };
+    pkgs = import inputs.nixpkgs {
+      inherit system;
+      config.allowBroken = true;
+    };
+
+    inherit (pkgs) lib;
+
+    hlib = pkgs.haskell.lib;
+
+    foo = pkgs.callPackage ./simplist_libfoo/libfoo/libfoo.nix {};
+
+    haskell-override = hself: hsuper: {
+      simplist_libfoo = hself.callCabal2nix "simplist_libfoo" ./simplist_libfoo {
+        inherit foo;
+      };
+    };
+
+    #haskell-override = hlib.packageSourceOverrides {
+    #  simplist_libfoo = ./simplist_libfoo;
+    #};
+
+    #haskell-override =  hlib.packageSourceOverrides (lib.filesystem.haskellPathsInDir ./.);
+
+    hpkgs = pkgs.haskellPackages.extend haskell-override;
+
+    dev-shell = hpkgs.shellFor {
+      packages = hp: with hp; [ simplist_libfoo ];
+    };
 
   in
     {
 
+      inherit pkgs hpkgs foo;
+
       packages.${system} = {
-       inherit simplist;
-       default = simplist;
+       #inherit (hpkgs) simplist simplist_zlib simplist_libfoo;
+       inherit foo;
+       inherit (hpkgs) simplist_libfoo;
+       default = hpkgs.simplist;
+       
      };
 
-     devShells.${system} = dev-shells // { default = dev-shells.simplist_zlib; };
+     devShells.${system}.default = dev-shell;
 
     };
 
