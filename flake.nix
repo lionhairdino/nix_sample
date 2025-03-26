@@ -26,6 +26,7 @@
     foo = pkgs.callPackage ./simplist_libfoo/libfoo/libfoo.nix {};
 
     haskell-override = hself: hsuper: {
+      simplist_zlib = hself.callCabal2nix "simplist_zlib" ./simplist_zlib {};
       simplist_libfoo = hself.callCabal2nix "simplist_libfoo" ./simplist_libfoo {
         inherit foo;
       };
@@ -40,7 +41,7 @@
     hpkgs = pkgs.haskellPackages.extend haskell-override;
 
     dev-shell = hpkgs.shellFor {
-      packages = hp: with hp; [ simplist_libfoo ];
+      packages = hp: with hp; [ simplist_libfoo simplist_zlib];
     };
 
   in
